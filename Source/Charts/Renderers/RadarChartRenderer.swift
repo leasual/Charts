@@ -105,7 +105,6 @@ open class RadarChartRenderer: LineRadarRenderer
             
             let p = center.moving(distance: CGFloat((e.y - chart.chartYMin) * Double(factor) * phaseY),
                                   atAngle: sliceangle * CGFloat(j) * CGFloat(phaseX) + chart.rotationAngle)
-            
             if p.x.isNaN
             {
                 continue
@@ -273,7 +272,6 @@ open class RadarChartRenderer: LineRadarRenderer
     
     private var _webLineSegmentsBuffer = [CGPoint](repeating: CGPoint(), count: 2)
     
-    //画背景图
     @objc open func drawWeb(context: CGContext)
     {
         guard
@@ -302,8 +300,7 @@ open class RadarChartRenderer: LineRadarRenderer
 
         for i in stride(from: 0, to: maxEntryCount, by: xIncrements)
         {
-            //画背景直线
-            let p = center.moving(distance: chart.radius / 6 * 5,
+            let p = center.moving(distance: CGFloat(chart.yAxis.entries[i] - chart.chartYMin) * factor,
                                   atAngle: sliceangle * CGFloat(i) + rotationangle)
             
             _webLineSegmentsBuffer[0].x = center.x
@@ -320,11 +317,12 @@ open class RadarChartRenderer: LineRadarRenderer
         context.setAlpha(chart.webAlpha)
         
         let labelCount = chart.yAxis.entryCount
-        for j in 0 ..< labelCount
-        {
+//        for j in 0 ..< labelCount
+//        {
+//            print("label= \(chart.yAxis.entries[j])")
             for i in 0 ..< data.entryCount
             {
-//                let r = CGFloat(chart.yAxis.entries[j] - chart.chartYMin) * factor
+                let r = CGFloat(chart.yAxis.entries[i] - chart.chartYMin) * factor
 //
 //                let p1 = center.moving(distance: r, atAngle: sliceangle * CGFloat(i) + rotationangle)
 //                let p2 = center.moving(distance: r, atAngle: sliceangle * CGFloat(i + 1) + rotationangle)
@@ -335,12 +333,12 @@ open class RadarChartRenderer: LineRadarRenderer
 //                _webLineSegmentsBuffer[1].y = p2.y
 //
 //                context.strokeLineSegments(between: _webLineSegmentsBuffer)
-                let r = chart.radius / CGFloat(data.entryCount) * CGFloat(i)//CGFloat(chart.yAxis.entries[j] - chart.chartYMin) * factor
+//                let r = chart.radius / CGFloat(data.entryCount) * CGFloat(i)//CGFloat(chart.yAxis.entries[j] - chart.chartYMin) * factor
                 let circlePath = UIBezierPath(arcCenter: CGPoint(x: center.x, y: center.y), radius: r, startAngle: CGFloat(0), endAngle: CGFloat(Double.pi * 2), clockwise: true)
                 context.addPath(circlePath.cgPath)
                 context.drawPath(using: .stroke)
             }
-        }
+//        }
         
         context.restoreGState()
     }
